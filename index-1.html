@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>تخته آنلاین | آزادشهر</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#050b14;--panel:#0b1422;--panel2:#101d2e;--line:#20334a;--blue:#2589ff;--blue2:#52b3ff;--gold:#e9b84d;--green:#20c982;--red:#ff5269;--text:#f4f8ff;--muted:#8ea2ba}
+body{margin:0;background:radial-gradient(circle at 50% -10%,#17375d 0,#07111f 42%,#03070d 100%);color:var(--text);font-family:Vazirmatn,Arial,sans-serif;min-height:100vh}
+button,input{font:inherit}button{border:0;color:white;cursor:pointer}
+.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:90px}
+.top{position:sticky;top:0;z-index:20;padding:14px 15px;background:rgba(5,11,20,.86);backdrop-filter:blur(18px);border-bottom:1px solid #17304b;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:10px;align-items:center}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#2b9cff,#0953ad);display:grid;place-items:center;font-size:24px;box-shadow:0 8px 25px #006eff35}.brand b{display:block;font-size:16px}.brand small{color:var(--muted);font-size:10px}
+.wallet{background:#0d1b2c;border:1px solid #21405e;border-radius:13px;padding:7px 11px;text-align:center}.wallet small{display:block;color:var(--muted);font-size:9px}.wallet b{color:#ffd86b;font-size:13px}
+.screen{display:none;padding:15px}.screen.active{display:block}
+.hero{padding:20px;border:1px solid #21405e;border-radius:25px;background:linear-gradient(145deg,#0d2137,#091321);box-shadow:0 20px 55px #0005;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:#2589ff18;left:-70px;top:-70px}
+.hero h1{margin:0 0 7px;font-size:26px}.hero p{margin:0;color:var(--muted);font-size:12px}
+.row{display:flex;gap:10px;align-items:center}.grow{flex:1}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.card{background:linear-gradient(145deg,#0c1827,#09111d);border:1px solid var(--line);border-radius:18px;padding:14px}.card small{display:block;color:var(--muted);font-size:10px}.card b{font-size:18px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 9px}.section-title b{font-size:14px}.section-title small{color:var(--muted)}
+.btn{border-radius:14px;padding:12px 15px;background:linear-gradient(135deg,#2589ff,#1265d4);font-weight:800;box-shadow:0 8px 22px #0074ff25}.btn.green{background:linear-gradient(135deg,#21cf8a,#119d67)}.btn.red{background:linear-gradient(135deg,#ff536c,#cc2745)}.btn.dark{background:#101d2c;border:1px solid #28425c}.btn:active{transform:scale(.98)}
+.lobby{display:grid;gap:10px}.match{background:#0b1725;border:1px solid #203850;border-radius:19px;padding:14px}.match .avatar{font-size:30px}.match strong{font-size:13px}.match small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.game-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.timer{background:#0d1b2c;border:1px solid #26415d;padding:7px 12px;border-radius:12px;font-weight:800;color:#ffd86b}
+.board-wrap{background:linear-gradient(145deg,#6b351e,#2d140d);padding:9px;border-radius:24px;box-shadow:0 20px 55px #0008;border:1px solid #b66a32}
+.board{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;aspect-ratio:1/.76;background:#3e1e13;border-radius:15px;padding:5px;overflow:hidden}
+.cell{position:relative;min-width:0;background:linear-gradient(145deg,#e8b96a,#a96735);border-radius:5px;min-height:30px}.cell.dark{background:linear-gradient(145deg,#7b3d27,#492116)}
+.piece{position:absolute;inset:15% 17%;border-radius:50%;display:grid;place-items:center;font-size:16px;font-weight:900;border:2px solid #fff8;box-shadow:0 4px 9px #0008;user-select:none}.piece.white{background:linear-gradient(145deg,#fff,#aeb9c7);color:#17202a}.piece.black{background:linear-gradient(145deg,#374556,#05080c);color:white}
+.dice{display:flex;gap:10px;justify-content:center;margin:13px 0}.die{width:55px;height:55px;border-radius:15px;background:#f5f7fb;color:#111;display:grid;place-items:center;font-size:29px;font-weight:900;box-shadow:0 9px 22px #0006}
+.turn{padding:11px 13px;border-radius:14px;background:#0b1827;border:1px solid #23405d;text-align:center;color:#a8bdd4;font-size:11px}
+.chat{height:360px;overflow:auto;padding:3px}.msg{max-width:82%;background:#101f31;border:1px solid #203850;border-radius:16px;padding:9px 11px;margin:8px 0}.msg.me{margin-right:auto;background:#0d3764;border-color:#1d6cb2}.msg b{font-size:10px}.msg p{margin:3px 0 0;font-size:11px}.send{display:flex;gap:8px}.send input{flex:1;background:#0b1725;border:1px solid #27425c;color:white;border-radius:14px;padding:12px;outline:none}
+.nav{position:fixed;z-index:30;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,720px);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:rgba(5,11,20,.94);backdrop-filter:blur(18px);border-top:1px solid #1a3047;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.nav button{background:transparent;color:#70879f;font-size:9px;padding:7px 2px;border-radius:12px}.nav button.active{color:white;background:#123254}.nav i{display:block;font-style:normal;font-size:20px;margin-bottom:2px}
+.profile{display:flex;gap:13px;align-items:center}.bigavatar{width:65px;height:65px;border-radius:20px;background:#123254;display:grid;place-items:center;font-size:35px}
+.admin-btn{display:none;margin-top:12px}.admin .admin-btn{display:block}
+.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.adminbox{padding:15px;border:1px solid var(--line);background:#0b1725;border-radius:18px}.adminbox b{font-size:20px}.adminbox small{display:block;color:var(--muted);font-size:10px}
+table{width:100%;border-collapse:collapse;font-size:10px;background:#0a1523;border-radius:15px;overflow:hidden}td,th{padding:10px 7px;border-bottom:1px solid #1b3045;text-align:right}th{color:#8fa8c1;background:#0e1d2d}
+.modal{display:none;position:fixed;inset:0;z-index:50;background:#02060ccc;backdrop-filter:blur(12px);padding:20px;align-items:flex-end}.modal.show{display:flex}.modalbox{width:min(100%,650px);margin:auto;background:#0a1421;border:1px solid #27435e;border-radius:25px;padding:18px;box-shadow:0 30px 90px #000}.close{float:left;background:#15273b;border-radius:10px;padding:6px 10px}
+.toast{position:fixed;z-index:80;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:#102136;border:1px solid #315477;padding:10px 15px;border-radius:14px;font-size:11px;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.loading{position:fixed;inset:0;z-index:100;background:#050b14;display:grid;place-items:center;text-align:center}.spinner{width:48px;height:48px;border:4px solid #18324e;border-top-color:#2c99ff;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 15px}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:430px){.board{gap:3px}.piece{font-size:13px}.die{width:48px;height:48px}}
+</style>
+</head>
+<body>
+<div id="loading" class="loading"><div><div class="spinner"></div><b>ورود به آزادشهر</b><div style="color:#7f96ad;font-size:10px;margin-top:6px">در حال آماده‌سازی بازی...</div></div></div>
+
+<div class="app" id="app">
+<header class="top">
+  <div class="brand"><div class="logo">🎲</div><div><b>تخته آنلاین</b><small>آزادشهر • بازی آنلاین</small></div></div>
+  <div class="wallet"><small>موجودی</small><b id="coins">۲۵۰۰ 🪙</b></div>
+</header>
+
+<main>
+<section id="home" class="screen active">
+  <div class="hero">
+    <h1>🎲 آماده‌ای بازی کنی؟</h1>
+    <p>وارد میز شو، حریف پیدا کن و در رقابت آنلاین پیروز شو.</p>
+    <div class="row" style="margin-top:16px"><button class="btn grow" data-go="lobby">ورود به سالن بازی</button><button class="btn dark" data-go="profile">پروفایل</button></div>
+  </div>
+  <div class="cards">
+    <div class="card"><small>بردهای من</small><b id="wins">۱۲</b></div>
+    <div class="card"><small>باخت‌ها</small><b id="losses">۵</b></div>
+    <div class="card"><small>امتیاز</small><b id="rating">۱۴۸۰</b></div>
+    <div class="card"><small>رتبه</small><b>#۲۸</b></div>
+  </div>
+  <div class="section-title"><b>🔥 میزهای فعال</b><small>آنلاین</small></div>
+  <div class="lobby">
+    <div class="match row"><div class="avatar">🐯</div><div class="grow"><strong>میز طلایی</strong><small>۲ بازیکن • شرط ۵۰۰ سکه</small></div><button class="btn" data-join="gold">ورود</button></div>
+    <div class="match row"><div class="avatar">🦊</div><div class="grow"><strong>میز سریع</strong><small>۱ بازیکن منتظر • بدون شرط</small></div><button class="btn green" data-join="fast">ورود</button></div>
+  </div>
+  <button id="adminBtn" class="btn red admin-btn" data-go="admin">⚙️ پنل مدیریت</button>
+</section>
+
+<section id="lobby" class="screen">
+  <div class="hero"><h1>🏟️ سالن بازی</h1><p>یک میز انتخاب کن یا سریع حریف پیدا کن.</p><div class="row" style="margin-top:14px"><button class="btn green grow" id="quickMatch">⚡ مسابقه سریع</button><button class="btn dark grow" id="createTable">＋ ساخت میز</button></div></div>
+  <div class="section-title"><b>میزهای آنلاین</b><small id="onlineCount">۱۲ میز</small></div>
+  <div id="tables" class="lobby"></div>
+</section>
+
+<section id="game" class="screen">
+  <div class="game-head"><div><b>میز شماره <span id="tableNo">۲۴۸۱</span></b><small style="display:block;color:#8299b1;font-size:9px">حریف: <span id="opponent">🐯 پلنگ</span></small></div><div class="timer">⏱ <span id="turnTimer">۳۰</span></div></div>
+  <div class="board-wrap"><div id="board" class="board"></div></div>
+  <div class="dice"><div class="die" id="die1">⚄</div><div class="die" id="die2">⚂</div></div>
+  <div class="turn" id="turnText">نوبت شماست — تاس را بریزید</div>
+  <div class="row" style="margin-top:10px"><button class="btn grow" id="roll">🎲 ریختن تاس</button><button class="btn dark" id="leaveGame">ترک میز</button></div>
+</section>
+
+<section id="chat" class="screen">
+  <div class="hero"><h1>💬 گفت‌وگوی بازی</h1><p>چت زنده بازیکنان</p></div>
+  <div id="chatList" class="chat" style="margin-top:10px"></div>
+  <div class="send"><input id="chatInput" maxlength="300" placeholder="پیام خود را بنویسید..."><button class="btn" id="sendChat">ارسال</button></div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="hero"><div class="profile"><div class="bigavatar" id="avatar">🦊</div><div><h2 id="playerName" style="margin:0;font-size:19px">مهمان</h2><small id="username" style="color:#8299b1">@guest</small></div></div></div>
+  <div class="cards"><div class="card"><small>سطح</small><b>۷</b></div><div class="card"><small>امتیاز</small><b>۱۴۸۰</b></div></div>
+  <div class="section-title"><b>تنظیمات</b></div>
+  <button class="btn dark" style="width:100%;margin-bottom:8px" id="reset">♻️ پاک‌سازی اطلاعات آزمایشی</button>
+</section>
+
+<section id="admin" class="screen">
+  <div class="hero"><h1>⚙️ پنل مدیریت</h1><p>اطلاعات این بخش باید از سرور واقعی خوانده شود.</p></div>
+  <div class="admin-grid" style="margin-top:12px">
+    <div class="adminbox"><small>کاربران</small><b id="aUsers">۱٬۲۸۴</b></div>
+    <div class="adminbox"><small>بازیکنان آنلاین</small><b id="aOnline">۸۷</b></div>
+    <div class="adminbox"><small>میزهای فعال</small><b id="aTables">۳۲</b></div>
+    <div class="adminbox"><small>گردش امروز</small><b id="aTurnover">۱۲۸٬۵۰۰ 🪙</b></div>
+  </div>
+  <div class="section-title"><b>آخرین فعالیت‌ها</b><small>زنده</small></div>
+  <table><thead><tr><th>بازیکن</th><th>عملیات</th><th>مبلغ</th></tr></thead><tbody id="activity"><tr><td>🐯 پلنگ</td><td>برد</td><td>+۵۰۰</td></tr><tr><td>🦊 روباه</td><td>ورود</td><td>—</td></tr><tr><td>🐼 پاندا</td><td>برد</td><td>+۱۲۰۰</td></tr></tbody></table>
+  <div class="row" style="margin-top:12px"><button class="btn grow" id="refreshAdmin">🔄 بروزرسانی</button><button class="btn dark grow" data-go="home">بازگشت</button></div>
+</section>
+</main>
+
+<nav class="nav">
+<button data-go="home" class="active"><i>🏠</i>خانه</button>
+<button data-go="lobby"><i>🎲</i>بازی</button>
+<button data-go="game"><i>♟️</i>میز من</button>
+<button data-go="chat"><i>💬</i>چت</button>
+<button data-go="profile"><i>👤</i>پروفایل</button>
+</nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ================================
+   تنظیمات اتصال سرور
+   این دو مقدار را وقتی بک‌اند داری پر کن.
+   ================================ */
+const API_BASE = "";
+const ADMIN_IDS = ["123456789"]; // آیدی عددی ادمین را اینجا بگذار
+
+const tg = window.Telegram?.WebApp;
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+let me = {id:null,name:"مهمان",username:"@guest"};
+let state = JSON.parse(localStorage.getItem("azadshahr_board") || "null") || {
+  coins:2500,wins:12,losses:5,rating:1480
+};
+let currentTable = null;
+let dice=[5,3];
+let myTurn=true;
+let timer=30;
+let timerInterval=null;
+
+const chatMessages=[
+  ["🐯 پلنگ","کسی میز سریع میاد؟",false],
+  ["🦊 روباه","من هستم 🔥",false],
+  ["🐼 پاندا","موفق باشید 😎",false]
+];
+
+function save(){localStorage.setItem("azadshahr_board",JSON.stringify(state))}
+function fmt(n){return Number(n||0).toLocaleString("fa-IR")}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.classList.remove("show"),1900)}
+function nav(id){$$(".screen").forEach(x=>x.classList.toggle("active",x.id===id));$$(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.go===id));if(id==="game")drawBoard()}
+function api(path,opt={}){if(!API_BASE) return Promise.reject(new Error("NO_API"));return fetch(API_BASE+path,{...opt,headers:{"Content-Type":"application/json",...(opt.headers||{})}}).then(async r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
+
+function telegram(){
+  try{
+    if(!tg)return;
+    tg.ready();tg.expand();
+    try{tg.setHeaderColor("#050b14");tg.setBackgroundColor("#050b14")}catch{}
+    const u=tg.initDataUnsafe?.user;
+    if(u){me.id=String(u.id);me.name=u.first_name||"بازیکن";me.username=u.username?"@"+u.username:"@"+me.name}
+  }catch(e){console.warn(e)}
+  $("#playerName").textContent=me.name;
+  $("#username").textContent=me.username;
+  const isAdmin=ADMIN_IDS.includes(me.id);
+  document.body.classList.toggle("admin",isAdmin);
+  $("#adminBtn").style.display=isAdmin?"block":"none";
+}
+
+/* مهم: در نسخه واقعی، تشخیص ادمین فقط باید روی سرور انجام شود.
+   ADMIN_IDS صرفاً برای تست رابط کاربری است. */
+
+function render(){
+  $("#coins").textContent=fmt(state.coins)+" 🪙";
+  $("#wins").textContent=fmt(state.wins);
+  $("#losses").textContent=fmt(state.losses);
+  $("#rating").textContent=fmt(state.rating);
+  renderTables();renderChat();
+}
+function renderTables(){
+ const arr=[
+  ["🏆","میز طلایی","🐯 پلنگ","۵۰۰ 🪙","gold"],
+  ["⚡","میز سریع","🦊 روباه","بدون شرط","fast"],
+  ["🔥","میز حرفه‌ای","🐼 پاندا","۲٬۰۰۰ 🪙","pro"],
+  ["💎","میز VIP","🦁 شیر","۵٬۰۰۰ 🪙","vip"]
+ ];
+ $("#tables").innerHTML=arr.map(x=>`<div class="match row"><div class="avatar">${x[0]}</div><div class="grow"><strong>${x[1]}</strong><small>${x[2]} • ${x[3]}</small></div><button class="btn" data-join="${x[4]}">ورود</button></div>`).join("");
+ $$("[data-join]").forEach(b=>b.onclick=()=>join(b.dataset.join));
+}
+function renderChat(){
+ $("#chatList").innerHTML=chatMessages.map(m=>`<div class="msg ${m[2]?"me":""}"><b>${m[0]}</b><p>${escapeHTML(m[1])}</p></div>`).join("");
+ const e=$("#chatList");e.scrollTop=e.scrollHeight;
+}
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+function join(type){
+ currentTable=type;$("#tableNo").textContent=Math.floor(1000+Math.random()*8999);
+ $("#opponent").textContent=type==="fast"?"🐺 بازیکن منتظر":"🐯 حریف آنلاین";
+ nav("game");startTimer();toast("✅ وارد میز شدید");
+}
+function startTimer(){
+ clearInterval(timerInterval);timer=30;$("#turnTimer").textContent=timer;
+ timerInterval=setInterval(()=>{timer--;$("#turnTimer").textContent=timer;if(timer<=0){clearInterval(timerInterval);myTurn=!myTurn;timer=30;$("#turnText").textContent=myTurn?"نوبت شماست — تاس را بریزید":"نوبت حریف است...";}},1000);
+}
+function drawBoard(){
+ const board=$("#board");if(!board)return;
+ let html="";
+ for(let i=0;i<72;i++){
+   let cls=(i%2?"dark":"");
+   let piece="";
+   if([5,6,7,8,18,19,20,31,32,42,43,44,55,56,57,58].includes(i)) piece=`<div class="piece ${i%3?"white":"black"}">${i%3?"":"●"}</div>`;
+   html+=`<div class="cell ${cls}">${piece}</div>`;
+ }
+ board.innerHTML=html;
+}
+function roll(){
+ if(!myTurn){toast("⏳ هنوز نوبت شما نیست");return}
+ dice=[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
+ const faces=["","⚀","⚁","⚂","⚃","⚄","⚅"];
+ $("#die1").textContent=faces[dice[0]];$("#die2").textContent=faces[dice[1]];
+ myTurn=false;$("#turnText").textContent="حرکت خود را انتخاب کنید...";
+ toast("🎲 تاس ریخته شد");
+}
+
+$("#roll").onclick=roll;
+$("#leaveGame").onclick=()=>{clearInterval(timerInterval);nav("lobby");toast("از میز خارج شدید")};
+$("#quickMatch").onclick=()=>join("fast");
+$("#createTable").onclick=()=>{toast("🎲 میز ساخته شد");join("created")};
+$("#sendChat").onclick=sendChat;
+$("#chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});
+function sendChat(){const i=$("#chatInput"),t=i.value.trim();if(!t)return;chatMessages.push([me.name,t,true]);i.value="";renderChat()}
+
+$("#reset").onclick=()=>{localStorage.removeItem("azadshahr_board");location.reload()};
+$("#refreshAdmin").onclick=()=>{toast(API_BASE?"اطلاعات از سرور درخواست شد":"بک‌اند هنوز متصل نیست");if(API_BASE)loadAdmin()};
+
+async function loadAdmin(){
+ try{
+   const d=await api("/api/admin/dashboard",{headers:{"Authorization":"Bearer "+(tg?.initData||"")}});
+   if(d.users!=null)$("#aUsers").textContent=fmt(d.users);
+   if(d.online!=null)$("#aOnline").textContent=fmt(d.online);
+   if(d.tables!=null)$("#aTables").textContent=fmt(d.tables);
+   if(d.turnover!=null)$("#aTurnover").textContent=fmt(d.turnover)+" 🪙";
+ }catch(e){console.warn(e);toast("❌ دریافت اطلاعات سرور انجام نشد")}
+}
+
+$$("[data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
+
+(async()=>{
+ telegram();render();drawBoard();
+ await new Promise(r=>setTimeout(r,500));
+ $("#loading").style.display="none";
+ $("#app").style.display="block";
+ if(API_BASE)loadAdmin();
+})();
+</script>
+</body>
+</html>
